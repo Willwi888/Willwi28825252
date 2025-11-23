@@ -93,7 +93,7 @@ const Visualizer: React.FC<VisualizerProps> = ({
 
     // Fix: Use a different name for the constructor variable to avoid shadowing the type
     const AudioCtor = window.AudioContext || (window as any).webkitAudioContext;
-    const ctx = new AudioCtor();
+    const ctx = new AudioCtor({ latencyHint: 'interactive' });
     const analyser = ctx.createAnalyser();
     analyser.fftSize = 256;
     
