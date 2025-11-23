@@ -9,6 +9,7 @@ interface ControlsProps {
   isGeneratingTheme: boolean;
   onOpenLyricEditor: () => void;
   onBgUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onSrtUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onTranslate: () => void;
   isTranslating: boolean;
   onSmartTiming: () => void;
@@ -17,6 +18,7 @@ interface ControlsProps {
 }
 
 const FONTS = [
+  { name: 'Noto Serif TC', label: 'Noto Serif (文青)' },
   { name: 'Montserrat', label: 'Montserrat (現代)' },
   { name: 'Inter', label: 'Inter (簡約)' },
   { name: 'Times New Roman', label: 'Serif (經典)' },
@@ -44,6 +46,7 @@ const Controls: React.FC<ControlsProps> = ({
   isGeneratingTheme, 
   onOpenLyricEditor,
   onBgUpload,
+  onSrtUpload,
   onTranslate,
   isTranslating,
   onSmartTiming,
@@ -51,26 +54,62 @@ const Controls: React.FC<ControlsProps> = ({
   onManualSync
 }) => {
   return (
-    <div className="bg-brand-900 border-l border-brand-800 p-6 h-full overflow-y-auto w-full md:w-80 flex-shrink-0">
-      <h2 className="text-xl font-display font-bold text-white mb-6">工作室控制</h2>
+    <div className="bg-brand-900 border-l border-brand-800 p-6 h-full overflow-y-auto w-full md:w-80 flex-shrink-0 font-sans">
+      <div className="mb-6 pb-4 border-b border-brand-800">
+        <h2 className="text-xl font-display font-bold text-noodle mb-1">創作控制台</h2>
+        <p className="text-xs text-stone-500">Willwi Studio - 溫飽區</p>
+      </div>
 
       <div className="space-y-6">
         
+        {/* Project Links / Resources */}
+        <div className="pb-4 border-b border-brand-800">
+           <label className="block text-xs font-bold text-stone-400 uppercase tracking-wider mb-2">專案資源庫 (Drive)</label>
+           <div className="flex gap-2">
+             <input 
+               type="text" 
+               value={settings.driveFolderUrl || ''}
+               onChange={(e) => updateSettings({ driveFolderUrl: e.target.value })}
+               placeholder="貼上連結..."
+               className="flex-1 bg-brand-800 text-xs text-white rounded-md border border-brand-700 p-2 outline-none focus:border-noodle focus:ring-1 focus:ring-noodle"
+             />
+             {settings.driveFolderUrl && (
+               <a 
+                 href={settings.driveFolderUrl}
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 className="p-2 bg-brand-700 hover:bg-noodle hover:text-brand-900 text-stone-300 rounded-md flex items-center justify-center transition-colors"
+                 title="開啟資料夾"
+               >
+                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+               </a>
+             )}
+           </div>
+        </div>
+
         {/* Lyrics & Content */}
         <div className="pb-4 border-b border-brand-800">
-           <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">內容管理</label>
-           <button 
-             onClick={onOpenLyricEditor}
-             className="w-full mb-3 py-2 border border-brand-500 text-brand-400 hover:bg-brand-800 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2"
-           >
-             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-             編輯/輸入歌詞
-           </button>
+           <label className="block text-xs font-bold text-stone-400 uppercase tracking-wider mb-2">內容管理</label>
+           
+           <div className="grid grid-cols-2 gap-2 mb-3">
+             <button 
+               onClick={onOpenLyricEditor}
+               className="py-2 border border-noodle text-noodle hover:bg-brand-800 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2"
+             >
+               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+               編輯歌詞
+             </button>
+             <label className="cursor-pointer py-2 border border-stone-600 text-stone-300 hover:bg-brand-800 hover:text-white rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 text-center">
+               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+               匯入 SRT
+               <input type="file" accept=".srt" onChange={onSrtUpload} className="hidden" />
+             </label>
+           </div>
 
            <div className="space-y-2">
-             <div className="text-xs text-gray-500">背景圖片</div>
+             <div className="text-xs text-stone-500">背景圖片</div>
              <div className="flex items-center gap-2">
-               <label className="flex-1 cursor-pointer py-2 px-3 bg-brand-800 hover:bg-brand-700 rounded-md text-xs text-center text-gray-300 border border-gray-700 transition-colors truncate">
+               <label className="flex-1 cursor-pointer py-2 px-3 bg-brand-800 hover:bg-brand-700 rounded-md text-xs text-center text-stone-300 border border-brand-700 transition-colors truncate">
                  {settings.backgroundImage ? '更換圖片' : '選擇背景圖片'}
                  <input type="file" accept="image/*" onChange={onBgUpload} className="hidden" />
                </label>
@@ -88,17 +127,17 @@ const Controls: React.FC<ControlsProps> = ({
         </div>
 
         {/* AI Tools */}
-        <div className="p-4 bg-brand-800 rounded-lg border border-brand-500/30">
-          <h3 className="text-sm font-semibold text-brand-400 mb-2 flex items-center gap-2">
+        <div className="p-4 bg-brand-800 rounded-lg border border-brand-700">
+          <h3 className="text-sm font-semibold text-soup mb-2 flex items-center gap-2">
             ✨ AI 工具箱 & 時間
           </h3>
           <div className="space-y-2">
             <button 
               onClick={onManualSync}
-              className="w-full py-2 bg-gradient-to-r from-teal-600 to-teal-500 hover:from-teal-500 hover:to-teal-400 text-white rounded-md text-xs font-bold transition-all shadow-lg flex items-center justify-center gap-2"
+              className="w-full py-2 bg-gradient-to-r from-soup to-noodle text-brand-900 hover:brightness-110 rounded-md text-xs font-bold transition-all shadow-lg flex items-center justify-center gap-2"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-              手動節奏對時 (Tap to Sync)
+              手動節奏對時 (推薦)
             </button>
 
             <div className="h-px bg-brand-600/30 my-2"></div>
@@ -106,7 +145,7 @@ const Controls: React.FC<ControlsProps> = ({
             <button 
               onClick={onAutoTheme}
               disabled={isGeneratingTheme}
-              className="w-full py-2 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 text-white rounded-md text-xs font-medium transition-colors"
+              className="w-full py-2 bg-brand-700 hover:bg-brand-600 disabled:opacity-50 text-stone-200 rounded-md text-xs font-medium transition-colors"
             >
               {isGeneratingTheme ? '分析中...' : '自動生成主題'}
             </button>
@@ -114,15 +153,15 @@ const Controls: React.FC<ControlsProps> = ({
             <button 
               onClick={onSmartTiming}
               disabled={isTiming}
-              className="w-full py-2 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 text-white rounded-md text-xs font-medium transition-colors"
+              className="w-full py-2 bg-brand-700 hover:bg-brand-600 disabled:opacity-50 text-stone-200 rounded-md text-xs font-medium transition-colors"
             >
-              {isTiming ? '分配中...' : 'AI 智能對時 (分配時間)'}
+              {isTiming ? '分配中...' : 'AI 智能對時 (純文字用)'}
             </button>
             
             <button 
               onClick={onTranslate}
               disabled={isTranslating}
-              className="w-full py-2 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 text-white rounded-md text-xs font-medium transition-colors"
+              className="w-full py-2 bg-brand-700 hover:bg-brand-600 disabled:opacity-50 text-stone-200 rounded-md text-xs font-medium transition-colors"
             >
               {isTranslating ? '翻譯中...' : 'AI 翻譯歌詞 (繁中)'}
             </button>
@@ -137,20 +176,20 @@ const Controls: React.FC<ControlsProps> = ({
                 id="showTranslation"
                 checked={settings.showTranslation}
                 onChange={(e) => updateSettings({ showTranslation: e.target.checked })}
-                className="rounded text-brand-500 focus:ring-brand-500 bg-brand-800 border-gray-700"
+                className="rounded text-noodle focus:ring-noodle bg-brand-800 border-brand-700"
               />
-              <label htmlFor="showTranslation" className="text-xs font-bold text-gray-400 uppercase tracking-wider select-none cursor-pointer">顯示翻譯字幕</label>
+              <label htmlFor="showTranslation" className="text-xs font-bold text-stone-400 uppercase tracking-wider select-none cursor-pointer">顯示翻譯字幕</label>
            </div>
         </div>
 
         {/* Animation Selection */}
         <div>
-          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">文字動畫</label>
+          <label className="block text-xs font-bold text-stone-400 uppercase tracking-wider mb-2">文字動畫</label>
           <div className="space-y-3">
              <select
                value={settings.animationType}
                onChange={(e) => updateSettings({ animationType: e.target.value as AnimationType })}
-               className="w-full bg-brand-800 text-white text-sm rounded-md border border-gray-700 p-2 focus:ring-1 focus:ring-brand-500 outline-none"
+               className="w-full bg-brand-800 text-stone-200 text-sm rounded-md border border-brand-700 p-2 focus:ring-1 focus:ring-noodle outline-none"
              >
                {Object.values(AnimationType).map(type => (
                  <option key={type} value={type}>{ANIMATION_LABELS[type]}</option>
@@ -158,7 +197,7 @@ const Controls: React.FC<ControlsProps> = ({
              </select>
              
              <div>
-                <span className="text-xs text-gray-500 block mb-1">動畫速度 ({settings.animationSpeed}x)</span>
+                <span className="text-xs text-stone-500 block mb-1">動畫速度 ({settings.animationSpeed}x)</span>
                 <input 
                   type="range" 
                   min="0.1" 
@@ -166,12 +205,12 @@ const Controls: React.FC<ControlsProps> = ({
                   step="0.1"
                   value={settings.animationSpeed}
                   onChange={(e) => updateSettings({ animationSpeed: Number(e.target.value) })}
-                  className="w-full accent-brand-500 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                  className="w-full accent-noodle h-1 bg-brand-700 rounded-lg appearance-none cursor-pointer"
                 />
              </div>
 
              <div>
-                <span className="text-xs text-gray-500 block mb-1">過場時間 ({settings.transitionDuration}s)</span>
+                <span className="text-xs text-stone-500 block mb-1">過場時間 ({settings.transitionDuration}s)</span>
                 <input 
                   type="range" 
                   min="0.1" 
@@ -179,7 +218,7 @@ const Controls: React.FC<ControlsProps> = ({
                   step="0.1"
                   value={settings.transitionDuration}
                   onChange={(e) => updateSettings({ transitionDuration: Number(e.target.value) })}
-                  className="w-full accent-brand-500 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                  className="w-full accent-noodle h-1 bg-brand-700 rounded-lg appearance-none cursor-pointer"
                 />
              </div>
           </div>
@@ -187,7 +226,7 @@ const Controls: React.FC<ControlsProps> = ({
 
         {/* Style Selection */}
         <div>
-          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">視覺風格</label>
+          <label className="block text-xs font-bold text-stone-400 uppercase tracking-wider mb-2">視覺風格</label>
           <div className="grid grid-cols-2 gap-2">
             {Object.values(ThemeStyle).map((style) => (
               <button
@@ -195,8 +234,8 @@ const Controls: React.FC<ControlsProps> = ({
                 onClick={() => updateSettings({ style })}
                 className={`py-2 px-2 text-xs rounded border transition-all truncate ${
                   settings.style === style 
-                    ? 'bg-brand-500 border-brand-500 text-white' 
-                    : 'bg-transparent border-gray-700 text-gray-400 hover:border-gray-500'
+                    ? 'bg-noodle border-noodle text-brand-900 font-bold' 
+                    : 'bg-transparent border-brand-700 text-stone-400 hover:border-brand-500'
                 }`}
               >
                 {THEME_LABELS[style]}
@@ -207,33 +246,33 @@ const Controls: React.FC<ControlsProps> = ({
 
         {/* Colors */}
         <div>
-          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">配色</label>
-          <div className="grid grid-cols-1 gap-3">
+          <label className="block text-xs font-bold text-stone-400 uppercase tracking-wider mb-2">配色</label>
+          <div className="grid grid-cols-1 gap-3 bg-brand-800/50 p-3 rounded-lg border border-brand-700">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-300">主色</span>
+              <span className="text-sm text-stone-300">主色 (Neon)</span>
               <input 
                 type="color" 
                 value={settings.primaryColor}
                 onChange={(e) => updateSettings({ primaryColor: e.target.value })}
-                className="w-8 h-8 rounded cursor-pointer bg-transparent border-none"
+                className="w-6 h-6 rounded cursor-pointer bg-transparent border-none"
               />
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-300">次色</span>
+              <span className="text-sm text-stone-300">次色 (Particle)</span>
               <input 
                 type="color" 
                 value={settings.secondaryColor}
                 onChange={(e) => updateSettings({ secondaryColor: e.target.value })}
-                className="w-8 h-8 rounded cursor-pointer bg-transparent border-none"
+                className="w-6 h-6 rounded cursor-pointer bg-transparent border-none"
               />
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-300">背景色</span>
+              <span className="text-sm text-stone-300">畫布背景</span>
               <input 
                 type="color" 
                 value={settings.backgroundColor}
                 onChange={(e) => updateSettings({ backgroundColor: e.target.value })}
-                className="w-8 h-8 rounded cursor-pointer bg-transparent border-none"
+                className="w-6 h-6 rounded cursor-pointer bg-transparent border-none"
               />
             </div>
           </div>
@@ -241,12 +280,12 @@ const Controls: React.FC<ControlsProps> = ({
 
         {/* Typography */}
         <div>
-          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">字體排版</label>
+          <label className="block text-xs font-bold text-stone-400 uppercase tracking-wider mb-2">字體排版</label>
           <div className="space-y-3">
              <select
                value={settings.fontFamily}
                onChange={(e) => updateSettings({ fontFamily: e.target.value })}
-               className="w-full bg-brand-800 text-white text-sm rounded-md border border-gray-700 p-2 focus:ring-1 focus:ring-brand-500 outline-none"
+               className="w-full bg-brand-800 text-stone-200 text-sm rounded-md border border-brand-700 p-2 focus:ring-1 focus:ring-noodle outline-none"
              >
                {FONTS.map(font => (
                  <option key={font.name} value={font.name}>{font.label}</option>
@@ -254,14 +293,14 @@ const Controls: React.FC<ControlsProps> = ({
              </select>
 
              <div>
-                <span className="text-xs text-gray-500 block mb-1">字體大小 ({settings.fontSize}px)</span>
+                <span className="text-xs text-stone-500 block mb-1">字體大小 ({settings.fontSize}px)</span>
                 <input 
                   type="range" 
                   min="20" 
                   max="120" 
                   value={settings.fontSize}
                   onChange={(e) => updateSettings({ fontSize: Number(e.target.value) })}
-                  className="w-full accent-brand-500 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                  className="w-full accent-noodle h-1 bg-brand-700 rounded-lg appearance-none cursor-pointer"
                 />
              </div>
           </div>
@@ -269,21 +308,21 @@ const Controls: React.FC<ControlsProps> = ({
 
         {/* Particles / Beat */}
         <div>
-          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">特效</label>
+          <label className="block text-xs font-bold text-stone-400 uppercase tracking-wider mb-2">特效</label>
           <div className="space-y-4">
              <div>
-                <span className="text-xs text-gray-500 block mb-1">粒子數量</span>
+                <span className="text-xs text-stone-500 block mb-1">粒子數量</span>
                 <input 
                   type="range" 
                   min="0" 
                   max="200" 
                   value={settings.particleCount}
                   onChange={(e) => updateSettings({ particleCount: Number(e.target.value) })}
-                  className="w-full accent-neon-pink h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                  className="w-full accent-soup h-1 bg-brand-700 rounded-lg appearance-none cursor-pointer"
                 />
              </div>
              <div>
-                <span className="text-xs text-gray-500 block mb-1">節奏靈敏度</span>
+                <span className="text-xs text-stone-500 block mb-1">節奏靈敏度</span>
                 <input 
                   type="range" 
                   min="0" 
@@ -291,7 +330,7 @@ const Controls: React.FC<ControlsProps> = ({
                   step="0.1"
                   value={settings.beatSensitivity}
                   onChange={(e) => updateSettings({ beatSensitivity: Number(e.target.value) })}
-                  className="w-full accent-neon-cyan h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                  className="w-full accent-noodle h-1 bg-brand-700 rounded-lg appearance-none cursor-pointer"
                 />
              </div>
           </div>

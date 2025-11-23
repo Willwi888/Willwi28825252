@@ -35,6 +35,7 @@ export interface VisualSettings {
   animationSpeed: number; // 0.5 to 2.0
   transitionDuration: number; // 0.1 to 1.0 seconds
   showTranslation: boolean;
+  driveFolderUrl?: string;
 }
 
 export interface SongMetadata {
