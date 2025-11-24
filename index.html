@@ -3,7 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Willwi 泡麵分享實驗 | 溫度，解鎖禮包</title>
+    <title>Willwi 泡麵聲學院 | 溫度，解鎖禮包</title>
+    <meta property="og:title" content="Willwi 泡麵聲學院" />
+    <meta property="og:description" content="你也參加泡麵實驗了嗎？分享溫度，解鎖禮包。" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?q=80&w=2069&auto=format&fit=crop" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -41,11 +44,16 @@
             animation: {
               'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
               'boil': 'boil 2s infinite ease-in-out',
+              'spin-slow': 'spin 8s linear infinite',
             },
             keyframes: {
               boil: {
                 '0%, 100%': { transform: 'translateY(0px)' },
                 '50%': { transform: 'translateY(-5px)' },
+              },
+              sparkle: {
+                  '0%, 100%': { opacity: 0.5, transform: 'scale(1)' },
+                  '50%': { opacity: 1, transform: 'scale(1.2)' },
               }
             }
           },

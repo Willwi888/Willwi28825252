@@ -58,32 +58,16 @@ const LandingPage = ({ onUnlock }: { onUnlock: () => void }) => {
   return (
     <div className="min-h-screen bg-brand-900 text-stone-300 font-sans selection:bg-soup selection:text-white overflow-x-hidden">
         {/* Hero Section */}
-        <section className="relative py-20 px-6 flex flex-col items-center justify-center text-center min-h-[70vh] overflow-hidden">
+        <section className="relative py-20 px-6 flex flex-col items-center justify-center text-center min-h-[60vh] overflow-hidden">
             {/* Background Texture */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-brand-800 via-brand-900 to-black opacity-80"></div>
             
             {/* Sparkling Particles */}
             <div className="absolute inset-0 opacity-30 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] animate-pulse-slow"></div>
 
-            <div className="relative z-10 flex flex-col items-center max-w-4xl mx-auto">
-                {/* French Bulldog Avatar with Gold Ring */}
-                <div className="relative mb-8 group">
-                    <div className="absolute -inset-1 bg-gradient-to-r from-noodle via-white to-noodle rounded-full opacity-75 blur group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-spin-slow"></div>
-                    <div className="relative w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden border-4 border-noodle shadow-[0_0_40px_rgba(251,191,36,0.4)] bg-black">
-                        <img 
-                          src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?q=80&w=2069&auto=format&fit=crop" 
-                          alt="Willwi French Bulldog" 
-                          className="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity"
-                        />
-                    </div>
-                    {/* Floating Bubble */}
-                    <div className="absolute -right-4 -top-4 bg-soup text-white text-xs font-bold px-3 py-1 rounded-full animate-bounce shadow-lg border border-noodle">
-                        院長
-                    </div>
-                </div>
-
-                <h1 className="text-4xl md:text-6xl font-serif font-bold text-noodle mb-4 tracking-tight drop-shadow-lg">
-                   Willwi 泡麵分享實驗
+            <div className="relative z-10 flex flex-col items-center max-w-4xl mx-auto pt-10">
+                <h1 className="text-5xl md:text-7xl font-serif font-bold text-noodle mb-6 tracking-tight drop-shadow-lg">
+                   Willwi 泡麵聲學院
                 </h1>
                 <p className="text-lg md:text-xl text-stone-400 max-w-2xl mb-8 leading-relaxed font-light">
                    你也參加泡麵實驗了嗎？<br/>
@@ -402,7 +386,7 @@ const LyricStudio = () => {
         {/* Top Bar */}
         <div className="h-16 bg-brand-900 border-b border-brand-800 flex items-center justify-between px-6 shadow-sm z-20">
             <h1 className="font-display font-black text-xl tracking-tighter text-white">
-              <span className="text-noodle">WILLWI</span> <span className="text-stone-500 font-medium text-sm">LYRIC STUDIO</span>
+              <span className="text-noodle">WILLWI</span> <span className="text-stone-500 font-medium text-sm">泡麵聲學院</span>
             </h1>
             
             <div className="flex items-center gap-4">
