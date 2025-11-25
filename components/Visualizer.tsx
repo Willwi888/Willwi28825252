@@ -76,6 +76,7 @@ const Visualizer: React.FC<VisualizerProps> = ({
   const requestRef = useRef<number>();
   const particlesRef = useRef<Particle[]>([]);
   const bgImageRef = useRef<HTMLImageElement | null>(null);
+  const bgVideoRef = useRef<HTMLVideoElement>(document.createElement('video'));
   
   // Stable Refs to access latest state in animation loop without recreation
   const stateRef = useRef({ lyrics, settings, currentTime, isPlaying });
@@ -106,6 +107,7 @@ const Visualizer: React.FC<VisualizerProps> = ({
     sourceRef.current = source;
   }, [audioRef]);
 
+  // Handle Background Image
   useEffect(() => {
     if (settings.backgroundImage) {
       const img = new Image();
@@ -117,6 +119,22 @@ const Visualizer: React.FC<VisualizerProps> = ({
       bgImageRef.current = null;
     }
   }, [settings.backgroundImage]);
+
+  // Handle Background Video
+  useEffect(() => {
+    const video = bgVideoRef.current;
+    if (settings.backgroundVideo) {
+      video.src = settings.backgroundVideo;
+      video.loop = true;
+      video.muted = true;
+      video.playsInline = true;
+      video.play().catch(e => console.error("Background video play error:", e));
+    } else {
+      video.pause();
+      video.removeAttribute('src'); // Clean up
+      video.load();
+    }
+  }, [settings.backgroundVideo]);
 
   useEffect(() => {
     const resize = () => {
@@ -169,7 +187,30 @@ const Visualizer: React.FC<VisualizerProps> = ({
 
     ctx.clearRect(0, 0, width, height);
 
-    if (bgImageRef.current) {
+    // Draw Background (Video or Image or Color)
+    if (settings.backgroundVideo && bgVideoRef.current.readyState >= 2) {
+         const vid = bgVideoRef.current;
+         const vidRatio = vid.videoWidth / vid.videoHeight;
+         const canvasRatio = width / height;
+         let renderW, renderH, offsetX, offsetY;
+         
+         if (vidRatio > canvasRatio) {
+           renderH = height;
+           renderW = height * vidRatio;
+           offsetX = (width - renderW) / 2;
+           offsetY = 0;
+         } else {
+           renderW = width;
+           renderH = width / vidRatio;
+           offsetX = 0;
+           offsetY = (height - renderH) / 2;
+         }
+         ctx.drawImage(vid, offsetX, offsetY, renderW, renderH);
+         // Overlay
+         ctx.fillStyle = `rgba(0,0,0,0.6)`;
+         ctx.fillRect(0, 0, width, height);
+
+    } else if (bgImageRef.current) {
       const img = bgImageRef.current;
       const imgRatio = img.width / img.height;
       const canvasRatio = width / height;
@@ -291,17 +332,22 @@ const Visualizer: React.FC<VisualizerProps> = ({
         ctx.filter = 'none';
       }
 
-      if (settings.style === ThemeStyle.NEON) {
-        ctx.shadowColor = settings.primaryColor;
-        ctx.shadowBlur = 25 * beatFactor;
-      } else if (settings.style === ThemeStyle.FIERY) {
-        ctx.shadowColor = '#ea580c'; // Updated to soup orange
-        ctx.shadowBlur = 20 * beatFactor;
-      } else if (settings.style === ThemeStyle.MINIMAL) {
-          ctx.shadowBlur = 0;
+      // Apply neon glow effect logic
+      const isNeon = settings.style === ThemeStyle.NEON;
+      const isFiery = settings.style === ThemeStyle.FIERY;
+      const isMinimal = settings.style === ThemeStyle.MINIMAL;
+
+      if (!isMinimal) {
+        ctx.shadowColor = isFiery ? '#ea580c' : settings.primaryColor;
+        
+        // Dynamic blur calculation
+        // Base blur varies by style, but added component is purely based on beat
+        const baseBlur = isNeon ? 20 : 10;
+        const dynamicBlur = baseBlur + (30 * (beatFactor - 1)); 
+        ctx.shadowBlur = Math.max(0, dynamicBlur);
       } else {
-          ctx.shadowColor = 'rgba(0,0,0,0.5)';
-          ctx.shadowBlur = 10;
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
       }
 
       ctx.font = `900 ${settings.fontSize}px ${settings.fontFamily}`;
@@ -316,8 +362,8 @@ const Visualizer: React.FC<VisualizerProps> = ({
       lines.forEach((txt, i) => {
           const ly = (i * lineHeight) - (totalHeight / 2);
           
-          if (settings.style === ThemeStyle.NEON || settings.style === ThemeStyle.FIERY) {
-              ctx.strokeStyle = settings.primaryColor;
+          if (isNeon || isFiery) {
+              ctx.strokeStyle = isFiery ? '#ea580c' : settings.primaryColor;
               ctx.lineWidth = 3;
               ctx.strokeText(txt, 0, ly);
           }
